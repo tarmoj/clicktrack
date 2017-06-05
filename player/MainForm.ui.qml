@@ -84,7 +84,7 @@ Rectangle {
             id: fileNameField
             x: 106
             y: 3
-            text: qsTr("qrc:/test.wav")
+            text: qsTr("qrc:/sounds/track1.mp3")
         }
 
         Button {

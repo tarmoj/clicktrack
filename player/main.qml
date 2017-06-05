@@ -4,6 +4,8 @@ import QtQuick.Layouts 1.0
 import QtQuick.Dialogs 1.2
 import QtMultimedia 5.5
 import QtWebSockets 1.1
+import Qt.labs.settings 1.0
+import Qt.labs.platform 1.0
 
 
 /*
@@ -23,6 +25,25 @@ ApplicationWindow {
     width: 640
     height: 280
     title: qsTr("Clicktrack player")
+
+
+    Settings {
+        property alias serverIP: socket.serverIP
+        //property alias lastFile: sound.source
+        property alias lastFolder: fileDialog.folder
+    }
+
+    Component.onCompleted: {
+        if (!socket.active) {
+            if (page.serverAddressField.text==socket.serverIP) {
+                socket.active = true
+            } else {
+                socket.serverIP = page.serverAddressField.text // this should activate the socket as well, since server.url is bound to serverIP
+            }
+            //console.log("Connecting to ",serverAddress.text, "Socket status: ", socket.status)
+        }
+        page.serverAddressField.text = socket.serverIP
+    }
 
     WebSocket {
         id: socket
@@ -82,9 +103,8 @@ ApplicationWindow {
 
 
 
-    }
+    }    
 
-    Component.onCompleted: socket.active = true
 
     FileDialog {
         id: fileDialog
@@ -108,7 +128,7 @@ ApplicationWindow {
     Audio {
         id: sound
         property int seekPosition: 0 // in ms
-        source: "qrc:///sound1.mp3"
+        source:  StandardPaths.writableLocation(7) + "/track1.mp3";  // 7- TempLocaton, see QStandardPaths must be copied there in main.cpp // "qrc:///sounds/track1.mp3"
         onStatusChanged: {
             console.log("sound status: ",status)
             if (status == Audio.Loading || status == Audio.Buffering) {
@@ -145,7 +165,7 @@ ApplicationWindow {
 
     }
 
-    Page1Form {
+    MainForm {
         id: page;
         anchors.fill: parent
         loadButton.onClicked:  {
