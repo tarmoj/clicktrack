@@ -1,4 +1,4 @@
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QFile>
 #include <QStandardPaths>
@@ -6,9 +6,9 @@
 int main(int argc, char *argv[])
 {
 	//QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-	QGuiApplication app(argc, argv);
+	QApplication app(argc, argv);
 	QString tempDir = QStandardPaths::writableLocation(QStandardPaths::TempLocation);
-	bool result = QFile::copy(":/sounds/track1.mp3", tempDir + "/track1.mp3" );
+	bool result = QFile::copy(":/sounds/track1.mp3", tempDir + "/track1.mp3" ); // must be copied to be seekable
 	app.setOrganizationName("tarmo-qt");
 	app.setOrganizationDomain("tarmo-qt.com");		  app.setApplicationName("clicktrack-player");
 

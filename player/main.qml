@@ -22,27 +22,26 @@ TODO: copy resource to temporary file for Linux/desktop at all
 
 ApplicationWindow {
     visible: true
-    width: 640
+    width: 500
     height: 280
     title: qsTr("Clicktrack player")
 
-
     Settings {
         property alias serverIP: socket.serverIP
-        //property alias lastFile: sound.source
+        property alias lastFile: sound.source
         property alias lastFolder: fileDialog.folder
     }
 
     Component.onCompleted: {
-        if (!socket.active) {
-            if (page.serverAddressField.text==socket.serverIP) {
-                socket.active = true
-            } else {
-                socket.serverIP = page.serverAddressField.text // this should activate the socket as well, since server.url is bound to serverIP
-            }
-            //console.log("Connecting to ",serverAddress.text, "Socket status: ", socket.status)
-        }
+//        if (!socket.active) {
+//            if (page.serverAddressField.text==socket.serverIP) {
+//                socket.active = true
+//            } else {
+//                socket.serverIP = page.serverAddressField.text // this should activate the socket as well, since server.url is bound to serverIP
+//            }
+//        }
         page.serverAddressField.text = socket.serverIP
+        page.fileNameField.text = sound.source
     }
 
     WebSocket {
@@ -101,7 +100,7 @@ ApplicationWindow {
                              //page.connectButton.enabled = false
                          }
 
-
+            active: false
 
     }    
 
@@ -112,12 +111,12 @@ ApplicationWindow {
         //nameFilters: [ "Sound file (*.sco)", "All files (*)" ]
         //folder: "file://"
         onAccepted: {
-            page.fileNameField.text = fileUrl
-            sound.source = fileUrl
-            var basename = fileUrl.toString()
+            page.fileNameField.text = file
+            sound.source = file
+            var basename = file.toString()
             basename = basename.slice(0, basename.lastIndexOf("/")+1)
             folder = basename
-            console.log("You chose: " + fileUrl + " in folder: " + basename)
+            console.log("You chose: " + file + " in folder: " + basename)
         }
         onRejected: {
             console.log("Canceled")
@@ -160,7 +159,7 @@ ApplicationWindow {
             var seconds = Math.round(position/1000.0)
             var timeString = Math.floor(seconds/60) +":" + (seconds%60).toString() // TODO: preceding 0-s? Date type? Javascript?
             page.timeLabel.text = timeString
-            console.log("Position: ", position)
+            //console.log("Position: ", position)
         }
 
     }
