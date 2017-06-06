@@ -23,13 +23,15 @@ TODO: copy resource to temporary file for Linux/desktop at all
 ApplicationWindow {
     visible: true
     width: 500
-    height: 280
+    height: 400
     title: qsTr("Clicktrack player")
+
 
     Settings {
         property alias serverIP: socket.serverIP
         property alias lastFile: sound.source
         property alias lastFolder: fileDialog.folder
+        property alias delay: page.delay
     }
 
     Component.onCompleted: {
@@ -42,6 +44,9 @@ ApplicationWindow {
 //        }
         page.serverAddressField.text = socket.serverIP
         page.fileNameField.text = sound.source
+        page.delaySpinbox.value = page.delay
+        // test
+        //console.log(StandardPaths.standardLocations(1))
     }
 
     WebSocket {
@@ -53,7 +58,8 @@ ApplicationWindow {
             console.log(message)
             var messageParts = message.split(" ");
             if (messageParts[0]==="play") {
-                sound.play()
+                playTimer.start();
+                //sound.play()
             }
 
             if (messageParts[0] === "stop") {
@@ -66,13 +72,11 @@ ApplicationWindow {
             if (messageParts[0] === "seek") {
                 if (!sound.seekable) {
                     console.log("This media is not seekable!")
-                }
-
-                if (messageParts.length>=2) {
+                } else if (messageParts.length>=2) {
                     sound.seekPosition = parseFloat(messageParts[1])*1000;
                     console.log("seek to: ", sound.seekPosition, sound.seekable)
-
-                    sound.seek(sound.seekPosition)
+                    seekTimer.start()
+                    //sound.seek(sound.seekPosition)
                 }
 
 
@@ -102,14 +106,28 @@ ApplicationWindow {
 
             active: false
 
-    }    
+    }
+
+    Timer {
+        id: playTimer
+        interval: page.delay
+        repeat: false
+        onTriggered: {console.log("Delay: ", interval); sound.play() }
+    }
+
+    Timer {
+        id: seekTimer
+        interval: page.delay
+        repeat: false
+        onTriggered: sound.seek(sound.seekPosition)
+    }
 
 
     FileDialog {
         id: fileDialog
         title: qsTr("Please choose sound file to play")
         //nameFilters: [ "Sound file (*.sco)", "All files (*)" ]
-        //folder: "file://"
+        folder: (Qt.platform.os === "android") ? "/mnt/sdcard" : StandardPaths.standardLocations(8)[0] // not sure if it works...
         onAccepted: {
             page.fileNameField.text = file
             sound.source = file
@@ -166,6 +184,7 @@ ApplicationWindow {
 
     MainForm {
         id: page;
+        property int delay: delaySpinbox.value
         anchors.fill: parent
         loadButton.onClicked:  {
             fileDialog.open()

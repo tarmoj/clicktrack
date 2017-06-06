@@ -2,7 +2,7 @@ import QtQuick 2.7
 import QtQuick.Controls 2.0
 import QtQuick.Layouts 1.0
 
-Rectangle {
+Item {
     id: ui
     property alias connectButton: connectButton
     property alias loadButton: loadButton
@@ -14,16 +14,17 @@ Rectangle {
     property alias stopButton: stopButton
     width: 660
     height: 300
-    gradient: Gradient {
-        GradientStop {
-            position: 1
-            color: "#ffffff"
-        }
-        GradientStop {
-            position: 0
-            color: "#45a916"
-        }
-    }
+    property alias delaySpinbox: delaySpinbox
+//    gradient: Gradient {
+//        GradientStop {
+//            position: 1
+//            color: "#ffffff"
+//        }
+//        GradientStop {
+//            position: 0
+//            color: "#45a916"
+//        }
+//    }
 
     ColumnLayout {
         id: columnLayout
@@ -61,6 +62,21 @@ Rectangle {
             Button {
                 id: connectButton
                 text: qsTr("Connect")
+            }
+        }
+
+        Row {
+            id: delayRow
+            spacing: 6
+
+            Label {text: qsTr("Delay (ms)")}
+            ToolTip {text: qsTr("Delay to set incoming network calls later (for faster devices)")}
+            SpinBox {
+                id: delaySpinbox; to: 1000; editable: true;
+            }
+            Button {
+                text: qsTr("Reset");
+                onClicked: delaySpinbox.value = 0
             }
         }
 
