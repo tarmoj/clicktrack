@@ -1,4 +1,4 @@
-QT += qml quick widgets core
+QT += qml quick widgets core multimedia websockets
 android: QT += androidextras
 
 CONFIG += c++11
@@ -39,3 +39,11 @@ DISTFILES += \
     android/gradlew.bat
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
+
+
+macx {
+    deploy.path = $$PWD
+    deploy.commands = $$[QT_INSTALL_PREFIX]/bin/macdeployqt $$OUT_PWD/$$DESTDIR/$${TARGET}.app -qmldir=$$PWD -dmg # deployment
+    INSTALLS = deploy
+
+}

@@ -20,3 +20,10 @@ HEADERS  += mainwindow.h \
     wsserver.h
 
 FORMS    += mainwindow.ui
+
+macx {
+    deploy.path = $$PWD
+    deploy.commands = $$[QT_INSTALL_PREFIX]/bin/macdeployqt $$OUT_PWD/$$DESTDIR/$${TARGET}.app -qmldir=$$PWD -dmg # deployment
+    INSTALLS = deploy
+
+}
